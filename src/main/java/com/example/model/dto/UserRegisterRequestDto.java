@@ -15,6 +15,8 @@ public class UserRegisterRequestDto {
     private String lastName;
     private String email;
     private String password;
+    @JsonAlias("confirm_password")
+    private String confirmPassword;
     @JsonAlias("phone_number")
     private String phoneNumber;
     private int age;
