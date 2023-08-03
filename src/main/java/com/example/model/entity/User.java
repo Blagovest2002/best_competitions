@@ -1,6 +1,7 @@
 package com.example.model.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
@@ -29,5 +30,6 @@ public class User {
     private String teamId;
     @Column
     private String countryId;
+
 
 }

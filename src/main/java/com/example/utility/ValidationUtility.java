@@ -1,5 +1,9 @@
 package com.example.utility;
 
+import com.example.model.dto.UserLoginDto;
+import com.example.model.dto.UserRegisterRequestDto;
+import com.example.model.exception.BadRequestException;
+
 public class ValidationUtility {
 
     public static boolean isValidFirstName(String firstName){
@@ -22,4 +26,35 @@ public class ValidationUtility {
     public static boolean arePasswordsMatching(String password1,String password2){
         return password1.equals(password2);
     }
+    public static void isValidRegistration(UserRegisterRequestDto user){
+        /*
+        if(!ValidationUtility.isValidEmail(user.getEmail())){
+            throw new BadRequestException(ValidationErrorMessages.NOT_VALID_EMAIl.label);
+        }*/
+        //make email validation using Anotation @ValidEmail
+       /*
+        if(!isValidPassword(user.getPassword())){
+            throw new BadRequestException(ValidationErrorMessages.NOT_VALID_PASSWORD.label);
+        }
+
+        */
+        if(!isValidFirstName(user.getFirstName())){
+            throw new BadRequestException(ValidationErrorMessages.NOT_VALID_FIRST_NAME.label);
+        }
+        if(!isValidLastName(user.getLastName())){
+            System.out.println("Here ");
+            throw new BadRequestException(ValidationErrorMessages.NOT_VALID_LAST_NAME.label);
+        }
+        if(!ValidationUtility.isValidPhoneNumber(user.getPhoneNumber())){
+            throw new BadRequestException(ValidationErrorMessages.NOT_VALID_PHONE_NUMBER.label);
+        }
+        if(!ValidationUtility.arePasswordsMatching(user.getPassword(),user.getConfirmPassword())){
+            throw new BadRequestException(ValidationErrorMessages.NOT_MATCHING_PASSWORDS.label);
+        }
+    }
+     public static void checkValidLogin(UserLoginDto u){
+
+     }
+
+
 }

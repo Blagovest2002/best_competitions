@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.model.dto.UserLoginDto;
 import com.example.model.dto.UserRegisterRequestDto;
 import com.example.model.entity.Role;
 import com.example.model.entity.User;
@@ -11,6 +12,7 @@ import com.example.utility.ValidationErrorMessages;
 import com.example.utility.ValidationUtility;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -23,48 +25,29 @@ public class UserService {
     private RoleRepository roleRepository;
     @Autowired
     private ModelMapper modelMapper ;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     public User register(UserRegisterRequestDto u){
         // get the role of the user it must be 2(competitor) by default
         int roleId = u.getRoleId();
-        //search for the role in db
         Optional<Role> role = roleRepository.findById(roleId);
         if (role.isEmpty()){
             throw new NotFoundException("There is not such a role");
         }
-        //validate
-        isValidRegistration(u);
+        ValidationUtility.isValidRegistration(u);
         checkIfExists(u.getEmail(),u.getPhoneNumber());
-        //validate
-        //only if valid save new registered user to database
-        User user = new User();
-        modelMapper.map(u,user);
+       User user = modelMapper.map(u,User.class);
+        user.setId(0);
         user.setRole(role.get());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return user;
     }
-    public void isValidRegistration(UserRegisterRequestDto user){
-
-        if(!ValidationUtility.isValidEmail(user.getEmail())){
-            throw new BadRequestException(ValidationErrorMessages.NOT_VALID_EMAIl.label);
-        }
-        if(!ValidationUtility.isValidPassword(user.getPassword())){
-            System.out.println(user.getPassword());
-            System.out.println(user.getPassword().matches("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"));
-            throw new BadRequestException(ValidationErrorMessages.NOT_VALID_PASSWORD.label);
-        }
-        if(!ValidationUtility.isValidFirstName(user.getFirstName())){
-            throw new BadRequestException(ValidationErrorMessages.NOT_VALID_FIRST_NAME.label);
-        }
-        if(!ValidationUtility.isValidLastName(user.getLastName())){
-            throw new BadRequestException(ValidationErrorMessages.NOT_VALID_LAST_NAME.label);
-        }
-        if(!ValidationUtility.isValidPhoneNumber(user.getPhoneNumber())){
-            throw new BadRequestException(ValidationErrorMessages.NOT_VALID_PHONE_NUMBER.label);
-        }
-        if(!ValidationUtility.arePasswordsMatching(user.getPassword(),user.getConfirmPassword())){
-            throw new BadRequestException(ValidationErrorMessages.NOT_MATCHING_PASSWORDS.label);
-        }
+    public User login(UserLoginDto u) {
+        return new User();
     }
+
+
     public void checkIfExists(String email,String phone){
         if(userRepository.findUserByEmail(email).isPresent()){
             throw new BadRequestException(ValidationErrorMessages.EMAIL_ALREADY_EXISTS.label);
@@ -73,4 +56,5 @@ public class UserService {
             throw new BadRequestException(ValidationErrorMessages.PHONE_NUMBER_ALREADY_EXISTS.label);
         }
     }
+
 }
