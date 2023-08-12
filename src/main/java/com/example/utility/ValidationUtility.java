@@ -27,17 +27,7 @@ public class ValidationUtility {
         return password1.equals(password2);
     }
     public static void isValidRegistration(UserRegisterRequestDto user){
-        /*
-        if(!ValidationUtility.isValidEmail(user.getEmail())){
-            throw new BadRequestException(ValidationErrorMessages.NOT_VALID_EMAIl.label);
-        }*/
-        //make email validation using Anotation @ValidEmail
-       /*
-        if(!isValidPassword(user.getPassword())){
-            throw new BadRequestException(ValidationErrorMessages.NOT_VALID_PASSWORD.label);
-        }
 
-        */
         if(!isValidFirstName(user.getFirstName())){
             throw new BadRequestException(ValidationErrorMessages.NOT_VALID_FIRST_NAME.label);
         }

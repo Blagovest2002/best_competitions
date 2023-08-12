@@ -1,48 +1,61 @@
 package com.example;
-import com.example.service.UserService;
+import com.example.jwt_configuration.JwtAuthenticationFilter;
+import com.example.model.exception.NotFoundException;
+import com.example.model.repository.UserRepository;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableAutoConfiguration(exclude = SecurityAutoConfiguration.class)
-//@EnableWebSecurity
-public class ConfigSec {
-    @Autowired
-    private UserDetailsService userDetailsService;
-/*
-    @Bean
-    public DaoAuthenticationProvider authProvider() {
-        System.out.println("LOG");
+@RequiredArgsConstructor
+@Data
+@ComponentScan
+public class ConfigSec  {
+    private final UserRepository userRepository;
+   @Bean
+    public UserDetailsService  getUserDetailsService(){
+       System.out.println("Here");
+        return  username -> userRepository.findUserByEmail(username).orElseThrow(()->new NotFoundException("User is not found"));
+   }
+   @Bean
+    public AuthenticationProvider authenticationProvider(){
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService);
-        authProvider.setPasswordEncoder(encoder());
+        authProvider.setUserDetailsService(getUserDetailsService());
+        authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
-    }
-   */
-    @Bean
-    public PasswordEncoder encoder() {
+   }
+   @Bean
+    public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
-    }
-    /*
-    @Bean
-    public AuthenticationManager authManager(HttpSecurity http) throws Exception {
-        return http.getSharedObject(AuthenticationManagerBuilder.class)
-                .authenticationProvider(authProvider())
-                .build();
-    }
-     */
+   }
+   @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+   }
+   /* @Bean
+    public JwtAuthenticationFilter customJwtAuthenticationFilter(UserDetailsService userDetailsService) {
+        return new JwtAuthenticationFilter(userDetailsService);
+    }*/
+
 }
 
