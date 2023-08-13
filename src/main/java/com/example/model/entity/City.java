@@ -1,5 +1,6 @@
 package com.example.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -12,9 +13,11 @@ public class City {
     @Column(name = "city_name")
     private String cityName;
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "country_id")
     private Country country;
     @OneToOne(mappedBy = "city")
+    @JsonIgnore
     private Location location;
 
 }

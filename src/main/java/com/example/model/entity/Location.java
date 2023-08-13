@@ -1,4 +1,5 @@
 package com.example.model.entity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.OverridesAttribute;
 import org.springframework.data.relational.core.mapping.Table;
 import jakarta.persistence.*;
@@ -14,6 +15,7 @@ public class Location {
     @JoinColumn (name = "city_id")
     private City city;
     @OneToMany(mappedBy = "location")
+    @JsonIgnore
     private List<Event> events;
 
 }

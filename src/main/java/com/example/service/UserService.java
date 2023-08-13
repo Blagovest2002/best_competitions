@@ -2,11 +2,14 @@ package com.example.service;
 
 import com.example.jwt_configuration.JwtService;
 import com.example.model.dto.*;
+import com.example.model.entity.Event;
 import com.example.model.entity.Role;
 import com.example.model.entity.Token;
 import com.example.model.entity.User;
 import com.example.model.exception.BadRequestException;
 import com.example.model.exception.NotFoundException;
+import com.example.model.exception.UnauthorizedException;
+import com.example.model.repository.EventRepository;
 import com.example.model.repository.RoleRepository;
 import com.example.model.repository.TokenRepository;
 import com.example.model.repository.UserRepository;
@@ -40,6 +43,8 @@ public class UserService {
     private JwtService jwtService;
     @Autowired
     private AuthenticationManager authenticationManager;
+    @Autowired
+    private EventRepository eventRepository;
     public UserResponseDto register(UserRegisterRequestDto u){
         System.out.println("get here register");
         // get the role of the user it must be 2(competitor) by default
@@ -129,9 +134,29 @@ public class UserService {
     }
 
     public void logout(String token) {
-        Token userToken = tokenRepository.findTokenByToken("token");
+        Token userToken = tokenRepository.findTokenByToken(token);
         userToken.setIsExpired("true");
         userToken.setIsRevoked("true");
         tokenRepository.save(userToken);
+    }
+
+    public ShowUserDto showUser(int id) {
+        User user = userRepository.findUserById(id).orElseThrow(()->new UnauthorizedException("This user does not exists!"));
+        ShowUserDto showUserDto = new ShowUserDto();
+        showUserDto.setAge(user.getAge());
+        showUserDto.setFirstName(user.getFirstName());
+        showUserDto.setLastName(user.getLastName());
+        showUserDto.setRole(user.getRole());
+        return  showUserDto;
+    }
+
+    public List<Event> showOrganizerEvents(String token) {
+        User user = userRepository.findUserByEmail(jwtService.extractEmail(token))
+                .orElseThrow(()->new NotFoundException("There is not such User!"));
+        System.out.println("USER IS FOUND" + user.getFirstName());
+        List<Event> events = eventRepository.findEventsByOwnerId(user.getId());
+        System.out.println("EVENTS ARWE FOUND + : " + events.size());
+       // System.out.println(events);
+        return events;
     }
 }

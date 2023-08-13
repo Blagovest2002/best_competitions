@@ -2,6 +2,7 @@ package com.example.controller;
 import javax.validation.Valid;
 
 import com.example.model.dto.*;
+import com.example.model.entity.Event;
 import com.example.model.exception.BadRequestException;
 import com.example.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,7 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
+import java.util.List;
 @RestController
 @AllArgsConstructor
 @Data
@@ -45,7 +46,7 @@ public class UserController extends ExceptionController {
         //LoginResponseDto user = userService.getInfo(id);
         return user;
     }*/
-    @PostMapping("/logout")
+    @PostMapping("/logout")//todo make the logic for deletion of tokens in blacklist
     public void logout(HttpServletRequest request){
         String authHeader = request.getHeader("Authorization");
         String token = authHeader.substring("Bearer ".length());
@@ -62,13 +63,22 @@ public class UserController extends ExceptionController {
         UserInfoDto user = userService.getProfileInfo(token);
         return user;
     }
-    @GetMapping("/show")
-    public void test(){
-        System.out.println("HIT!!");
-
+    @GetMapping("/info/{id}")
+    public ShowUserDto showUserInformation(@PathVariable("id") int id){
+        ShowUserDto showUserDto  = userService.showUser(id);
+        return showUserDto;
     }
     //todo edit profile
     //todo change passwords
+    //show organizers events
+    @GetMapping("/events")
+    public List<Event> showOrganizerEvents(HttpServletRequest request){
+        String authHeader = request.getHeader("Authorization");
+        String token = authHeader.substring("Bearer ".length());
+        List<Event> events  = userService.showOrganizerEvents(token);
+        return events;
+    }
+    //todo register for event
 
 
 }

@@ -30,11 +30,16 @@ public class SecurityConfiguration {
         return http
                 .csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable())
                 .authorizeHttpRequests(customizer -> customizer
-                        .requestMatchers("/users/profile").permitAll()
+                        .requestMatchers("/event/add").hasAuthority("organizer")//to do specify 401 exception message
+                        .requestMatchers("/users/events").hasAuthority("organizer")
+                        .requestMatchers("/event/{id}/weight_classes/add").hasAuthority("organizer")
+                        .requestMatchers("/users/profile").authenticated()
+                        .requestMatchers("/users/info/{id}").authenticated()
+                        .requestMatchers("/users/logout").authenticated()
                         .requestMatchers("/users").permitAll()
                         .requestMatchers("/users/login").permitAll()
-                        .requestMatchers("/users/show").permitAll()
-                        .requestMatchers("/event/add").permitAll()
+                        .requestMatchers("/event/{id}").permitAll()
+                        .requestMatchers("/event/{id}/weight_classes").permitAll()
                         .anyRequest().denyAll())
                 .sessionManagement(customizer-> customizer
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

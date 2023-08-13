@@ -1,5 +1,7 @@
 package com.example.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
@@ -43,7 +45,9 @@ public class User implements UserDetails {
     private String countryId;
     @OneToMany(mappedBy = "user")
     private List<Token> tokens;
-
+    @OneToMany(mappedBy = "owner")
+    private List<Event> events;
+    @OneToMany
 
 
     @Override
@@ -51,6 +55,7 @@ public class User implements UserDetails {
         Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
         System.out.println(this.role.getRole());
         authorities.add(new SimpleGrantedAuthority(this.role.getRole()));
+        System.out.println("authorities " + authorities ) ;
         return authorities;
     }
 
