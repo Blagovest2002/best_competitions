@@ -11,11 +11,12 @@ public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn (name = "city_id")
+    @ManyToOne (cascade = CascadeType.ALL)
+    @JoinColumn (name = "city_id",referencedColumnName = "id")
     private City city;
+    @Column(name = "address")
+    private String address;
     @OneToMany(mappedBy = "location")
     @JsonIgnore
     private List<Event> events;
-
 }

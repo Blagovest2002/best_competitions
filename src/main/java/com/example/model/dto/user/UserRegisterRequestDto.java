@@ -1,4 +1,4 @@
-package com.example.model.dto;
+package com.example.model.dto.user;
 
 import com.example.model.entity.Role;
 import com.example.utility.ValidEmail;

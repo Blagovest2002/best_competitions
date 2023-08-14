@@ -1,7 +1,7 @@
 package com.example.utility;
 
-import com.example.model.dto.UserLoginDto;
-import com.example.model.dto.UserRegisterRequestDto;
+import com.example.model.dto.user.UserLoginDto;
+import com.example.model.dto.user.UserRegisterRequestDto;
 import com.example.model.exception.BadRequestException;
 
 public class ValidationUtility {

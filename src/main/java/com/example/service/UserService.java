@@ -1,25 +1,19 @@
 package com.example.service;
 
 import com.example.jwt_configuration.JwtService;
-import com.example.model.dto.*;
-import com.example.model.entity.Event;
-import com.example.model.entity.Role;
-import com.example.model.entity.Token;
-import com.example.model.entity.User;
+import com.example.model.dto.user.*;
+import com.example.model.entity.*;
 import com.example.model.exception.BadRequestException;
 import com.example.model.exception.NotFoundException;
 import com.example.model.exception.UnauthorizedException;
-import com.example.model.repository.EventRepository;
-import com.example.model.repository.RoleRepository;
-import com.example.model.repository.TokenRepository;
-import com.example.model.repository.UserRepository;
+import com.example.model.repository.*;
 import com.example.utility.ValidationErrorMessages;
 import com.example.utility.ValidationUtility;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -42,9 +36,13 @@ public class UserService {
     @Autowired
     private JwtService jwtService;
     @Autowired
-    private AuthenticationManager authenticationManager;
+    private CategoryRepository categoryRepository;
     @Autowired
     private EventRepository eventRepository;
+    @Autowired
+    private WeightClassRepository weightClassRepository;
+    @Autowired
+    private ParticipantRepository participantRepository;
     public UserResponseDto register(UserRegisterRequestDto u){
         System.out.println("get here register");
         // get the role of the user it must be 2(competitor) by default
@@ -158,5 +156,32 @@ public class UserService {
         System.out.println("EVENTS ARWE FOUND + : " + events.size());
        // System.out.println(events);
         return events;
+    }
+//todo validate if the event is open for registrations
+    public RegisterUserForEventResponseDto registerUserForEvent(int weightClassId, int eventId,String token) {
+        Participant participant = new Participant();
+        User user = userRepository.findUserByEmail(jwtService.extractEmail(token)).get();
+        participant.setUser(user);
+        Event event = eventRepository.findById(eventId).orElseThrow(
+                ()->new NotFoundException("The event does not exist!"));
+        participant.setEvent(event);
+        System.out.println("id weight class " + weightClassId);
+        System.out.println("WeightClass object: " + weightClassRepository.findWeightClassById(weightClassId));
+        System.out.println("id weight class " + weightClassId);
+        WeightClass weightClass = weightClassRepository.findWeightClassById(weightClassId).orElseThrow(
+                ()->new NotFoundException("The weight class does not exists!"));
+        Category category = new Category();
+        category.setEvent(event);
+        category.setWeightClass(weightClass);
+        categoryRepository.save(category);
+        participant.setCategory(category);
+        participant.setEvent(event);
+        participant.setUser(user);
+        participantRepository.save(participant);
+        RegisterUserForEventResponseDto registerUserForEventResponseDto = new RegisterUserForEventResponseDto();
+        registerUserForEventResponseDto.setFirstName(user.getFirstName());
+        registerUserForEventResponseDto.setLastName(user.getLastName());
+        registerUserForEventResponseDto.setWeightClass(weightClass.getWeightClass());
+        return registerUserForEventResponseDto;
     }
 }

@@ -1,10 +1,11 @@
 package com.example.service;
 
 import com.example.jwt_configuration.JwtService;
-import com.example.model.dto.EventRegisterResponseDto;
-import com.example.model.dto.RegisterEventDto;
-import com.example.model.dto.ShowEventDto;
+import com.example.model.dto.event.EventRegisterResponseDto;
+import com.example.model.dto.event.RegisterEventDto;
+import com.example.model.dto.event.ShowEventDto;
 import com.example.model.entity.*;
+import com.example.model.exception.BadRequestException;
 import com.example.model.exception.NotFoundException;
 import com.example.model.exception.UnauthorizedException;
 import com.example.model.repository.*;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -34,17 +36,22 @@ public class EventService {
     private WeightClassRepository weightClassRepository;
     public EventRegisterResponseDto registerEvent(RegisterEventDto registerEventDto,String token){
         //validateUser(token);
+        checkDateOfEvent(registerEventDto.getDate());
         Event event = new Event();
         City city = cityRepository.findCityById(registerEventDto.getCityId())
                 .orElseThrow(()->new NotFoundException("City id is invalid"));
         Location location = new Location();
         User user = userRepository.findUserByEmail(jwtService.extractEmail(token)).orElseThrow(()-> new NotFoundException("user is not found"));
         location.setCity(city);
+        location.setAddress(registerEventDto.getAddress());
         locationRepository.save(location);
         event.setLocation(location);
         event.setName(registerEventDto.getEventName());
         event.setOwner(user);
         event.setCompleted(false);
+
+        event.setDate(java.sql.Date.valueOf(registerEventDto.getDate()));
+
         event.setOpenForRegistrations(true);
         eventRepository.save(event);
         EventRegisterResponseDto eventRegisterResponse = new EventRegisterResponseDto();
@@ -52,14 +59,12 @@ public class EventService {
         return eventRegisterResponse;
     }
 
-    private void validateUser(String token) {
-        String email = jwtService.extractEmail(token);
-        User user = userRepository.findUserByEmail(email).get();
-        if(!user.getRole().getRole().equals(UserRole.ORGANIZER.label)){
-            throw new UnauthorizedException("Only organizer can create events");
+    private void checkDateOfEvent(LocalDate date) {
+        if(date.isBefore(LocalDate.now())){
+            throw new BadRequestException("Date must be in the future");
         }
-
     }
+
 
     public ShowEventDto showEvent(int id) {
         Event event = eventRepository.findById(id).orElseThrow(()->new NotFoundException("This event does not exist!"));

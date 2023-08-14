@@ -47,9 +47,8 @@ public class User implements UserDetails {
     private List<Token> tokens;
     @OneToMany(mappedBy = "owner")
     private List<Event> events;
-    @OneToMany
-
-
+    @OneToMany(mappedBy = "user")
+    private List<Participant> participations;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();

@@ -33,6 +33,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/event/add").hasAuthority("organizer")//to do specify 401 exception message
                         .requestMatchers("/users/events").hasAuthority("organizer")
                         .requestMatchers("/event/{id}/weight_classes/add").hasAuthority("organizer")
+                        .requestMatchers("users/event/{id}/register").hasAuthority("competitor")
                         .requestMatchers("/users/profile").authenticated()
                         .requestMatchers("/users/info/{id}").authenticated()
                         .requestMatchers("/users/logout").authenticated()

@@ -1,4 +1,4 @@
-package com.example.model.dto;
+package com.example.model.dto.user;
 
 import lombok.Data;
 import com.example.model.entity.Role;

@@ -16,8 +16,6 @@ public class City {
     @JsonIgnore
     @JoinColumn(name = "country_id")
     private Country country;
-    @OneToOne(mappedBy = "city")
-    @JsonIgnore
-    private Location location;
+
 
 }

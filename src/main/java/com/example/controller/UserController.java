@@ -1,7 +1,7 @@
 package com.example.controller;
 import javax.validation.Valid;
 
-import com.example.model.dto.*;
+import com.example.model.dto.user.*;
 import com.example.model.entity.Event;
 import com.example.model.exception.BadRequestException;
 import com.example.service.UserService;
@@ -79,6 +79,14 @@ public class UserController extends ExceptionController {
         return events;
     }
     //todo register for event
-
+    @PostMapping("/event/{id}/register")
+    public RegisterUserForEventResponseDto registerUserForEvent(
+            @RequestBody RegisterUserForEventDto registerUserForEventDto,
+            @PathVariable("id") int id,HttpServletRequest request){
+        String token = request.getHeader("Authorization").substring("Bearer ".length());
+       return userService.registerUserForEvent(registerUserForEventDto.getWeightClassId(),id,token);
+    }
+    //todo show all upcoming events for user
+    //todo show all past events in which user participated
 
 }

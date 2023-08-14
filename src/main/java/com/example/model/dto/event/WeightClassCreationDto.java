@@ -1,4 +1,4 @@
-package com.example.model.dto;
+package com.example.model.dto.event;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.Data;

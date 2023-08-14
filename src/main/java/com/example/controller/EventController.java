@@ -1,9 +1,9 @@
 package com.example.controller;
 
-import com.example.model.dto.EventRegisterResponseDto;
-import com.example.model.dto.RegisterEventDto;
-import com.example.model.dto.ShowEventDto;
-import com.example.model.dto.WeightClassCreationDto;
+import com.example.model.dto.event.EventRegisterResponseDto;
+import com.example.model.dto.event.RegisterEventDto;
+import com.example.model.dto.event.ShowEventDto;
+import com.example.model.dto.event.WeightClassCreationDto;
 import com.example.model.entity.WeightClass;
 import com.example.service.EventService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -48,4 +48,7 @@ public class EventController extends ExceptionController{
         return weightClasses;
 
     }
+    //todo show all upcoming events
+    //todo show all categories for event
+    //todo show all upcoming events in given country
 }
