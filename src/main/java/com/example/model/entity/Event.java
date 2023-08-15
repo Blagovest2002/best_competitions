@@ -5,12 +5,14 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 
 import java.sql.Date;
 import java.util.List;
 
 @Data
+@ToString(exclude = {"owner","weightClasses","participants","categories"})
 @Entity(name = "events")
 public class Event {
     @Id

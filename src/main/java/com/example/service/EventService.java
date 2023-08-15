@@ -4,17 +4,20 @@ import com.example.jwt_configuration.JwtService;
 import com.example.model.dto.event.EventRegisterResponseDto;
 import com.example.model.dto.event.RegisterEventDto;
 import com.example.model.dto.event.ShowEventDto;
+import com.example.model.dto.participant.ShowParticipantDto;
 import com.example.model.entity.*;
 import com.example.model.exception.BadRequestException;
 import com.example.model.exception.NotFoundException;
 import com.example.model.exception.UnauthorizedException;
 import com.example.model.repository.*;
 import com.example.utility.UserRole;
+import jakarta.validation.OverridesAttribute;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -34,6 +37,8 @@ public class EventService {
     private LocationRepository locationRepository;
     @Autowired
     private WeightClassRepository weightClassRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
     public EventRegisterResponseDto registerEvent(RegisterEventDto registerEventDto,String token){
         //validateUser(token);
         checkDateOfEvent(registerEventDto.getDate());
@@ -106,6 +111,23 @@ public class EventService {
         Event event = eventRepository.findById(id)
                 .orElseThrow(()->new NotFoundException("Event not found!"));
         return event.getWeightClasses();
+    }
+
+    public List<ShowParticipantDto> showParticipantsForCategory(int eventId, int weightClassId) {
+       Category category = categoryRepository.findByWeightClassId(weightClassId).orElseThrow(
+               ()-> new NotFoundException("Category not found!")
+       );
+        List<Participant> participants = category.getParticipants();
+       List<ShowParticipantDto> participantsDto = new ArrayList<>();
+       for(Participant participant : participants){
+           ShowParticipantDto participantDto = new ShowParticipantDto();
+           participantDto.setFirstName(participant.getUser().getFirstName());
+            participantDto.setLastName(participant.getUser().getLastName());
+            participantDto.setWeightClass(category.getWeightClass());
+            participantDto.setId(participant.getId());
+            participantsDto.add(participantDto);
+       }
+       return participantsDto;
     }
 }
 

@@ -37,6 +37,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/users/profile").authenticated()
                         .requestMatchers("/users/info/{id}").authenticated()
                         .requestMatchers("/users/logout").authenticated()
+                        .requestMatchers("/event/{event_id}/weight_class/{weight_class_id}/participants").permitAll()
                         .requestMatchers("/users").permitAll()
                         .requestMatchers("/users/login").permitAll()
                         .requestMatchers("/event/{id}").permitAll()

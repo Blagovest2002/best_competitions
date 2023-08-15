@@ -1,11 +1,13 @@
 package com.example.model.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.OverridesAttribute;
+import lombok.ToString;
 import org.springframework.data.relational.core.mapping.Table;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.util.List;
 @Data
+@ToString(exclude = "events")
 @Entity(name = "locations")
 public class Location {
     @Id

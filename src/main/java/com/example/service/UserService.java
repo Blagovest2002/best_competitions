@@ -164,7 +164,10 @@ public class UserService {
         participant.setUser(user);
         Event event = eventRepository.findById(eventId).orElseThrow(
                 ()->new NotFoundException("The event does not exist!"));
+        System.out.println("City and country LOG " + event.getLocation().getCity().getCityName() +" "
+                +event.getLocation().getCity().getCountry().getCountryName());
         participant.setEvent(event);
+        System.out.println("Log event " + event.getId());
         System.out.println("id weight class " + weightClassId);
         System.out.println("WeightClass object: " + weightClassRepository.findWeightClassById(weightClassId));
         System.out.println("id weight class " + weightClassId);
@@ -174,6 +177,7 @@ public class UserService {
         category.setEvent(event);
         category.setWeightClass(weightClass);
         categoryRepository.save(category);
+        System.out.println(category.getId());
         participant.setCategory(category);
         participant.setEvent(event);
         participant.setUser(user);

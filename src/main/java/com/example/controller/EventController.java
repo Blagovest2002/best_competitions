@@ -4,9 +4,12 @@ import com.example.model.dto.event.EventRegisterResponseDto;
 import com.example.model.dto.event.RegisterEventDto;
 import com.example.model.dto.event.ShowEventDto;
 import com.example.model.dto.event.WeightClassCreationDto;
+import com.example.model.dto.participant.ShowParticipantDto;
+import com.example.model.entity.Participant;
 import com.example.model.entity.WeightClass;
 import com.example.service.EventService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.OverridesAttribute;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -46,9 +49,16 @@ public class EventController extends ExceptionController{
         List<WeightClass> weightClasses;
         weightClasses = eventService.getWeightClassesForEvent(id);
         return weightClasses;
+        }
+        @GetMapping("/{event_id}/weight_class/{weight_class_id}/participants")
+        public List<ShowParticipantDto> showParticipantsForCategory(@PathVariable("event_id") int eventId,
+                                                                    @PathVariable("weight_class_id") int weightClassId){
+               return eventService.showParticipantsForCategory(eventId,weightClassId);
 
-    }
+        }
+
+
     //todo show all upcoming events
-    //todo show all categories for event
+    //todo show all weight_classes for event
     //todo show all upcoming events in given country
 }
