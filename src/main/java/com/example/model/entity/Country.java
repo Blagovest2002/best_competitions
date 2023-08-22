@@ -1,5 +1,6 @@
 package com.example.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
@@ -16,6 +17,7 @@ public class Country {
  private int id;
  @Column(name = "country_name")
  private String countryName;
+ @JsonIgnore
  @OneToMany(mappedBy = "country")
  List<City> cities;
 }

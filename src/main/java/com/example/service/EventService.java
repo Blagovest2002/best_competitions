@@ -16,9 +16,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -79,6 +81,7 @@ public class EventService {
         showEventDto.setName(event.getName());
         showEventDto.setCountry(country);
         showEventDto.setCity(city);
+        showEventDto.setId(id);
         return showEventDto;
     }
 
@@ -128,6 +131,33 @@ public class EventService {
             participantsDto.add(participantDto);
        }
        return participantsDto;
+    }
+
+    public List<ShowEventDto> showAllUpcomingEvents() {
+        List<Event> events = eventRepository.findEventByDateAfter(Date.valueOf(LocalDate.now()));
+        List<ShowEventDto> dtoEvents = new ArrayList<>();
+        for(Event event : events){
+            ShowEventDto showEventDto = new ShowEventDto();
+            showEventDto.setId(event.getId());
+            showEventDto.setCity(event.getLocation().getCity().getCityName());
+            showEventDto.setName(event.getName());
+            showEventDto.setCountry(event.getLocation().getCity().getCountry().getCountryName());
+            dtoEvents.add(showEventDto);
+        }
+        return dtoEvents;
+    }
+
+    public List<ShowEventDto> showUpcomingEventsInCountry(int countryId) {
+        return eventRepository.findEventsByLocation_City_Country_Id(countryId)
+                .stream()
+                .map((Event e)->{
+                    ShowEventDto eventDto = new ShowEventDto();
+                    eventDto.setId(e.getId());
+                    eventDto.setCountry(e.getLocation().getCity().getCountry().getCountryName());
+                    eventDto.setName(e.getName());
+                    eventDto.setCity(e.getLocation().getCity().getCityName());
+                    return eventDto;
+                }).collect(Collectors.toList());
     }
 }
 

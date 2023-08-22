@@ -42,6 +42,9 @@ public class SecurityConfiguration {
                         .requestMatchers("/users/login").permitAll()
                         .requestMatchers("/event/{id}").permitAll()
                         .requestMatchers("/event/{id}/weight_classes").permitAll()
+                        .requestMatchers("/event/upcoming").permitAll()
+                        .requestMatchers("event/upcoming/country").permitAll()
+                        .requestMatchers("/countries/show").permitAll()
                         .anyRequest().denyAll())
                 .sessionManagement(customizer-> customizer
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

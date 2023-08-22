@@ -59,6 +59,14 @@ public class EventController extends ExceptionController{
 
 
     //todo show all upcoming events
-    //todo show all weight_classes for event
+    @GetMapping("/upcoming")
+    public List<ShowEventDto> showUpcomingEventsDto(){
+        return eventService.showAllUpcomingEvents();
+    }
     //todo show all upcoming events in given country
+    @GetMapping("/upcoming/country")
+    public List<ShowEventDto> showUpcomingEventsInCountry(@RequestParam(name = "country_id") int countryId){
+        return eventService.showUpcomingEventsInCountry(countryId);
+
+    }
 }

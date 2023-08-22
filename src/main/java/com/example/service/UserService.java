@@ -173,7 +173,7 @@ public class UserService {
         System.out.println("id weight class " + weightClassId);
         WeightClass weightClass = weightClassRepository.findWeightClassById(weightClassId).orElseThrow(
                 ()->new NotFoundException("The weight class does not exists!"));
-        Category category = new Category();
+        Category category = categoryRepository.findByWeightClassId(weightClassId).orElseGet(()->new Category());
         category.setEvent(event);
         category.setWeightClass(weightClass);
         categoryRepository.save(category);

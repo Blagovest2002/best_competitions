@@ -78,7 +78,7 @@ public class UserController extends ExceptionController {
         List<Event> events  = userService.showOrganizerEvents(token);
         return events;
     }
-    //todo register for event
+
     @PostMapping("/event/{id}/register")
     public RegisterUserForEventResponseDto registerUserForEvent(
             @RequestBody RegisterUserForEventDto registerUserForEventDto,
@@ -86,7 +86,11 @@ public class UserController extends ExceptionController {
         String token = request.getHeader("Authorization").substring("Bearer ".length());
        return userService.registerUserForEvent(registerUserForEventDto.getWeightClassId(),id,token);
     }
-    //todo show all upcoming events for user
+    //todo congirm registration
+    //todo create matches and brackets
+    //todo start category
+    //todo show schedule for matches
+
     //todo show all past events in which user participated
 
 }
