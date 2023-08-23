@@ -7,6 +7,7 @@ import com.example.model.exception.UnauthorizedException;
 import com.example.model.repository.TokenRepository;
 import com.example.model.repository.UserRepository;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.security.Key;
 import java.util.Date;
@@ -26,24 +28,22 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Data
-public class JwtService extends JwtExceptionHandler{
+public class JwtService {
     public final String KEY = "bsAdy0GtgoriYYoQ7ANbngdz0UQozgGEPAr00+F48iUw2/OJnzj6ijfAt8Y8yPH2";
     private final TokenRepository tokenRepository;
+//    private final HandlerExceptionResolver handlerExceptionResolver;
     public String extractEmail(String jwt){
         return extractClaim(jwt,Claims::getSubject);
     }
     private Claims extractAllClaims(String token){
-        System.out.println("Log in extract All claims");
-        System.out.println(Jwts.parserBuilder()
-                .setSigningKey(getSignInKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody());
-        return Jwts.parserBuilder()
-                .setSigningKey(getSignInKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+
+                return Jwts.parserBuilder()
+                        .setSigningKey(getSignInKey())
+                        .build()
+                        .parseClaimsJws(token)
+                        .getBody();
+
+
     }
     public String generateToken(Map<String,Object> extraClaims, UserDetails userDetails){
 

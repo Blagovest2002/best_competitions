@@ -9,12 +9,15 @@ import com.example.model.entity.Participant;
 import com.example.model.entity.WeightClass;
 import com.example.service.EventService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.OverridesAttribute;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+
 import java.util.List;
 
 @RestController
@@ -74,5 +77,6 @@ public class EventController extends ExceptionController{
         String token = request.getHeader("Authorization").substring("Bearer ".length());
         eventService.closeEvent(token,eventId);
     }
+
 
 }

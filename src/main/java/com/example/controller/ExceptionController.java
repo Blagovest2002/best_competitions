@@ -4,15 +4,22 @@ import com.example.model.dto.ErrorDto;
 import com.example.model.exception.BadRequestException;
 import com.example.model.exception.NotFoundException;
 import com.example.model.exception.UnauthorizedException;
+import io.jsonwebtoken.ExpiredJwtException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 //Global Exception Handler
-public abstract class ExceptionController {
+@ControllerAdvice
+public abstract class ExceptionController  {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorDto handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
@@ -47,4 +54,11 @@ public abstract class ExceptionController {
         errorDto.setDateTime(now);
         return errorDto;
     }
+    @ExceptionHandler(ExpiredJwtException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorDto expiredJwtException(Exception e){
+        System.out.println(e);
+        return setErrorDto(HttpStatus.UNAUTHORIZED,e);
+    }
+
 }
