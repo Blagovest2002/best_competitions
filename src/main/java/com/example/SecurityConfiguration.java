@@ -1,6 +1,7 @@
 package com.example;
 
 import com.example.jwt_configuration.JwtAuthenticationFilter;
+import com.example.utility.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -27,13 +28,15 @@ public class SecurityConfiguration {
     private final AuthenticationProvider authenticationProvider;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        //todo refactor with enum
         return http
                 .csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable())
                 .authorizeHttpRequests(customizer -> customizer
                         .requestMatchers("/event/add").hasAuthority("organizer")//to do specify 401 exception message
                         .requestMatchers("/users/events").hasAuthority("organizer")
-                        .requestMatchers("/event/{id}/weight_classes/add").hasAuthority("organizer")
-                        .requestMatchers("users/event/{id}/register").hasAuthority("competitor")
+                        .requestMatchers("/event/{id}/weight_classes/add").hasAuthority(UserRole.ORGANIZER.label)
+                        .requestMatchers("/users/event/{id}/register").hasAuthority("competitor")
+                        .requestMatchers("/event/close").hasAuthority(UserRole.ORGANIZER.label)
                         .requestMatchers("/users/profile").authenticated()
                         .requestMatchers("/users/info/{id}").authenticated()
                         .requestMatchers("/users/logout").authenticated()

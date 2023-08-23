@@ -157,31 +157,47 @@ public class UserService {
        // System.out.println(events);
         return events;
     }
-//todo validate if the event is open for registrations
+//todo validate whether the user is already registered for the event
+
     public RegisterUserForEventResponseDto registerUserForEvent(int weightClassId, int eventId,String token) {
-        Participant participant = new Participant();
+
         User user = userRepository.findUserByEmail(jwtService.extractEmail(token)).get();
-        participant.setUser(user);
         Event event = eventRepository.findById(eventId).orElseThrow(
                 ()->new NotFoundException("The event does not exist!"));
-        System.out.println("City and country LOG " + event.getLocation().getCity().getCityName() +" "
-                +event.getLocation().getCity().getCountry().getCountryName());
-        participant.setEvent(event);
-        System.out.println("Log event " + event.getId());
-        System.out.println("id weight class " + weightClassId);
-        System.out.println("WeightClass object: " + weightClassRepository.findWeightClassById(weightClassId));
-        System.out.println("id weight class " + weightClassId);
-        WeightClass weightClass = weightClassRepository.findWeightClassById(weightClassId).orElseThrow(
-                ()->new NotFoundException("The weight class does not exists!"));
-        Category category = categoryRepository.findByWeightClassId(weightClassId).orElseGet(()->new Category());
+        System.out.println("USER EVENTS SHOW : ");
+        System.out.println(user.getEvents());
+        System.out.println(event);
+        if(user.getEvents().contains(event)){
+            throw new BadRequestException("The user is already registered!");
+        }
+        if(!event.isOpenForRegistrations()){
+            throw new BadRequestException("The event is closed for registration");
+        }
+        WeightClass weightClass = weightClassRepository
+                .findWeightClassById(weightClassId)
+                .orElseThrow(
+                ()->new NotFoundException("The weight class does not exists!")
+                );
+        if(weightClass.getEvent().getId()!= eventId){
+            throw new BadRequestException("this weight_class_id is not for this event");
+        }
+        if(participantRepository.findParticipantByUserIdAndEventId(user.getId(),eventId)!=null){
+            throw new BadRequestException("this user is already registered!");
+        }
+        Category category = categoryRepository
+                .findByWeightClassId(weightClassId)
+                .orElseGet(()->new Category());
+
         category.setEvent(event);
         category.setWeightClass(weightClass);
         categoryRepository.save(category);
-        System.out.println(category.getId());
+
+        Participant participant = new Participant();
         participant.setCategory(category);
         participant.setEvent(event);
         participant.setUser(user);
         participantRepository.save(participant);
+       //form the dto
         RegisterUserForEventResponseDto registerUserForEventResponseDto = new RegisterUserForEventResponseDto();
         registerUserForEventResponseDto.setFirstName(user.getFirstName());
         registerUserForEventResponseDto.setLastName(user.getLastName());

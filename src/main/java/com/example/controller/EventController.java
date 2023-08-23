@@ -67,6 +67,12 @@ public class EventController extends ExceptionController{
     @GetMapping("/upcoming/country")
     public List<ShowEventDto> showUpcomingEventsInCountry(@RequestParam(name = "country_id") int countryId){
         return eventService.showUpcomingEventsInCountry(countryId);
-
     }
+    //finish registrations and make them inactive
+    @PutMapping("/close")
+    public void closeEvent(@RequestParam(name = "event_id") int eventId,HttpServletRequest request){
+        String token = request.getHeader("Authorization").substring("Bearer ".length());
+        eventService.closeEvent(token,eventId);
+    }
+
 }

@@ -159,5 +159,19 @@ public class EventService {
                     return eventDto;
                 }).collect(Collectors.toList());
     }
+
+    //close event for registrations
+    public void closeEvent(String token, int eventId) {
+        User user = userRepository.findUserByEmail(jwtService.extractEmail(token))
+                .orElseThrow(()->new NotFoundException("User not found!"));
+
+        for(Event event: user.getEvents()){
+            if(eventId == event.getId()){
+                event.setOpenForRegistrations(false);
+                eventRepository.save(event);
+                return;
+            }
+        }
+    }
 }
 

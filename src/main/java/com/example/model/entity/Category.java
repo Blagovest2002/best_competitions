@@ -12,6 +12,7 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @ManyToOne
+    @JoinColumn(name = "event_id",referencedColumnName = "id")
     private Event event;
     @OneToMany(mappedBy = "category")
     private List<Participant> participants;
