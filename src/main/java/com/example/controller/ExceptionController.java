@@ -7,7 +7,9 @@ import com.example.model.exception.UnauthorizedException;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.tomcat.websocket.AuthenticationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -60,5 +62,11 @@ public abstract class ExceptionController  {
         System.out.println(e);
         return setErrorDto(HttpStatus.UNAUTHORIZED,e);
     }
-
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity<ErrorDto> authException(Exception e){
+        System.out.println(e);
+        ErrorDto errorDto = setErrorDto(HttpStatus.UNAUTHORIZED,e);
+        return new ResponseEntity<>(errorDto,HttpStatus.UNAUTHORIZED);
+    }
 }

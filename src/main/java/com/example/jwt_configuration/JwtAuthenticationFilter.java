@@ -1,6 +1,7 @@
 package com.example.jwt_configuration;
 
 import com.example.controller.ExceptionController;
+import com.example.model.exception.UnauthorizedException;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -33,6 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException  {
       try {
+          System.out.println(handlerExceptionResolver.getClass());
            if (request.getServletPath().contains("/users/login")) {
                filterChain.doFilter(request, response);
                return;
@@ -61,7 +64,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                }
            }
            filterChain.doFilter(request, response);
-       } catch (ExpiredJwtException e){
+       } catch (ExpiredJwtException | AuthenticationException e){
+          System.out.println("catched");
            handlerExceptionResolver.resolveException(request,response,null,e);
       }
     }
